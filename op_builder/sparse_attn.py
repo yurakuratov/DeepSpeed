@@ -67,19 +67,15 @@ class SparseAttnBuilder(OpBuilder):
             # auto-install of triton is broken on some systems, reverting to manual install for now
             # see this issue: https://github.com/microsoft/DeepSpeed/issues/1710
             self.warning(
-                f"please install triton==1.0.0 if you want to use sparse attention")
+                f"please install triton>=1.0.0,<=1.1.1 if you want to use sparse attention")
             return False
+        TRITON_MAJOR = int(triton.__version__.split('.')[0])
+        TRITON_MINOR = int(triton.__version__.split('.')[1])
+        triton_compatible = TRITON_MAJOR == 1 and TRITON_MINOR in [0, 1]
 
-        if pkg_version:
-            installed_triton = pkg_version.parse(triton.__version__)
-            triton_mismatch = installed_triton != pkg_version.parse("1.0.0")
-        else:
-            installed_triton = triton.__version__
-            triton_mismatch = installed_triton != "1.0.0"
-
-        if triton_mismatch:
+        if not triton_compatible:
             self.warning(
-                f"using untested triton version ({installed_triton}), only 1.0.0 is known to be compatible"
+                f"using untested triton version ({triton.__version__}), only >=1.0.0,<=1.1.1 is known to be compatible"
             )
             return False
 
