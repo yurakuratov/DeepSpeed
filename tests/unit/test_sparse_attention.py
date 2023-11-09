@@ -257,9 +257,8 @@ def _skip_on_cuda_compatability():
     cuda_major = int(torch.version.cuda.split('.')[0]) * 10
     cuda_minor = int(torch.version.cuda.split('.')[1])
     cuda_version = cuda_major + cuda_minor
-    if (cuda_version != 101 and cuda_version != 102) and \
-            (cuda_version != 111 and cuda_version != 110):
-        pytest.skip("requires cuda 10.1 or 10.2 or 11.0 or 11.1")
+    if cuda_version not in [101, 102, 111, 110, 113]:
+        pytest.skip("requires cuda 10.1 or 10.2 or 11.0 or 11.1 or 11.3")
 
 
 @pytest.mark.parametrize("block", [16, 32])
